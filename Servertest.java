@@ -19,13 +19,28 @@ public class Servertest {
 		DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
         PrintWriter serverPrintOut = new PrintWriter(new OutputStreamWriter(outToClient, "UTF-8"), true);
 
-				
-		String a=app.getQuestion();
-		serverPrintOut.println(a);
-	   
+		
+        int randomquestionID=app.getRandomNumber();		
+		String qstion=app.getQuestion(randomquestionID);
+		String answera=app.getAnswerA(randomquestionID);
+		String answerb=app.getAnswerB(randomquestionID);
+		String answerc=app.getAnswerC(randomquestionID);
+		String answerd=app.getAnswerD(randomquestionID);
+		serverPrintOut.println(qstion);
+		serverPrintOut.println("A) "+answera);
+		serverPrintOut.println("B) "+answerb);
+		serverPrintOut.println("C) "+answerc);
+		serverPrintOut.println("D) "+answerd);
 		
 		clientSentence = inFromClient.readLine();
-		serverPrintOut.println("you wrote: "+clientSentence);
+		String correctanswer=app.getcorrectAnswer(randomquestionID);
+
+		if(clientSentence.equals(correctanswer)){
+			serverPrintOut.println("Congrats! You got the right answer which is: "+clientSentence);
+		}
+		else{
+			serverPrintOut.println("Nope... The correct answer was: "+correctanswer);
+		}
     }
   }
 }
