@@ -1,13 +1,8 @@
 package TriviaQuiz_1;
 
 import java.awt.event.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Properties;
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 public class GUItest extends JFrame implements ActionListener {
 
