@@ -62,11 +62,10 @@ public class GUItest extends JFrame implements ActionListener {
 		}
 
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("Clicked");
+		System.out.println("button pressed");
 	}
 	
 	public void SetGUI(String quesstion,String a,String b,String c,String d,String corrrect){
-        
 	    label.setText(quesstion);
 		A.setText(a);
 		B.setText(b);

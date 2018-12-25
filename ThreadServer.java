@@ -13,6 +13,7 @@ class ThreadServer implements Runnable {
 	static String SendNextQuestion;
 	static int[] IDarray = new int[10];
 	//static Thread[] threads = new Thread[4];
+	static int waitingcounter=0;
 
     
 	  public static void getrandomvalues(int randomquestionlol) {
@@ -34,6 +35,22 @@ class ThreadServer implements Runnable {
 			serverPrintOut.println(cc);
 			serverPrintOut.println(dd);
 			serverPrintOut.println(correctcorrect);
+		}
+		public synchronized int sendnextquestion(int x){
+			try {
+				SendNextQuestion=inFromClient.readLine();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if(SendNextQuestion.equals("waiting")){
+				waitingcounter++;
+				if(waitingcounter==4){
+					settoclient(IDarray[x]);
+					waitingcounter=0;
+					return x+1;
+				}
+			}
+			return 0;
 		}
 
 	public static void main(String args[]) throws Exception {
@@ -70,18 +87,17 @@ class ThreadServer implements Runnable {
 	@Override
 	public void run() {
 		settoclient(IDarray[0]);
-		
-		for(int i=1;i<10;i++){
-			try {
-				SendNextQuestion=inFromClient.readLine();
-				System.out.println("everyone clicked");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			if(SendNextQuestion.equals("ready")){
-				settoclient(IDarray[i]);
-				SendNextQuestion="stop";
-			}
+		int i=1;
+		while(true){
+		int trying=sendnextquestion(i);
+		if(trying>i){
+			i++;
+		}
+		if(i==10){
+			break;
+		}
+			
+			break;
 		}//end of for loop
 		System.out.println("10 questions asked.Ending...");
 	}//end of run
