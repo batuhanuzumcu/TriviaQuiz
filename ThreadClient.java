@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Scanner;
+
 import javax.swing.JOptionPane;
 import java.awt.event.*;
 
@@ -16,6 +18,7 @@ public class ThreadClient implements Runnable {
 	private static BufferedReader inFromServer = null; // The input stream
 	private static BufferedReader inFromUser = null;
 	private static DataOutputStream outToServer = null;
+	private static Scanner inputforIP= new Scanner(System.in);
 	
 	private static String question,ansA,ansB,ansC,ansD,correctans; //the values to enter for GUI	
 	private int Generalscore=0,questionsanswered=0; //generalscore is player's overall score
@@ -37,7 +40,11 @@ public class ThreadClient implements Runnable {
 	public static void main(String[] args) {
 		int portNumber = 3333;
 		String host = "localhost";
-
+		
+		System.out.print("Hello! Please enter the ip of the host: ");
+			host=inputforIP.nextLine();
+			System.out.println("");
+		
 		// Open a socket on a given host and port. Open input and output streams.
 		try {
 			clientSocket = new Socket(host, portNumber);
@@ -67,10 +74,11 @@ public class ThreadClient implements Runnable {
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		} 
+		
 		ClientGUI alpha = new ClientGUI(); //initialize GUI
 		alpha.SetGUI(question, ansA, ansB, ansC, ansD, correctans,Generalscore); //set the first question data for GUI
 		
-		JOptionPane.showMessageDialog(alpha.frame, "Welcome to the game!Please choose the correct answers to get the most score.");
+		JOptionPane.showMessageDialog(alpha.frame, "Welcome to the game! Out of 10 questions, \n Please choose the correct answers to get the most score.");
 		
 		
 		//we add actionlisteners to buttons to calculate points and get next question.
