@@ -9,18 +9,25 @@ import java.sql.Statement;
 import java.util.Properties;
 
 public class TriviaDB {
-	int numberofquestions=3;  //1 fazla yazılacak random number icin xd
+	int numberofquestions=38;  //the range to take the random number from total number of questions
+	String arr = null; // We will use this string to execute queries
+	int checkprevious=0;//to control not to get same question in a row
 	
-	public int getRandomNumber(){
+	public int getRandomNumber(){//take random question ID to get question data
 		int randomnumberquestion= (int) (Math.random() * (numberofquestions - 1)) + 1;
+		if(checkprevious==randomnumberquestion){
+		 randomnumberquestion= (int) (Math.random() * (numberofquestions - 1)) + 1;
+		 checkprevious=randomnumberquestion;
+		}
 		return randomnumberquestion;
 	}
-	
+
 	private final String userName = "root";      //enter user name for DB connection
 	private final String password = "cancan563"; //enter password for DB connection
 	private final String serverName = "localhost";
 	private final int portNumber = 3306;
-	private final String dbName = "test";
+	private final String dbName = "test";      //the name of the database file
+	
 	
 	public Connection getConnection() throws SQLException {
 		Connection conn = null;
@@ -31,6 +38,8 @@ public class TriviaDB {
 		return conn;
 	}
  
+	
+	//We start to write get methods to take data from database tables using query statements.
 	
 	public String getQuestion(int id) {
 		// Connect to MySQL
@@ -43,10 +52,10 @@ public class TriviaDB {
 		
 		try {
 		    PreparedStatement st = conn.prepareStatement("SELECT * " + "FROM questiontable " + "WHERE id="+id);
-		    // ONEMLI NOT!!! : questiontable burda table'ımızın adı. Eğer DB'deki table ismi farklıysa aynı yap.
+		    //  We write a query to get the data from the table.
 		    ResultSet rs=st.executeQuery();
 		  
-		    String arr = null;
+		    arr = null;
 		    while (rs.next()) {
 		        String questn = rs.getString("question");
 		        arr = questn.replace("\n", ",");
@@ -60,7 +69,7 @@ public class TriviaDB {
 			}
 		
 	}	
-	
+	//After this point it is just get methods for answers ,score and correctanswer
 	
 	public String getAnswerA(int id) {
 		// Connect to MySQL
@@ -73,13 +82,12 @@ public class TriviaDB {
 		
 		try {
 		    PreparedStatement st = conn.prepareStatement("SELECT * " + "FROM questiontable " + "WHERE id="+id);
-		    // ONEMLI NOT!!! : questiontable burda table'ımızın adı. Eğer DB'deki table ismi farklıysa aynı yap.
 		    ResultSet rs=st.executeQuery();
 		  
-		    String arr = null;
+		    arr = null;
 		    while (rs.next()) {
-		        String questn = rs.getString("A");
-		        arr = questn.replace("\n", ",");
+		        String AnswerA = rs.getString("A");
+		        arr = AnswerA.replace("\n", ",");
 		    }return arr;
 		    }
 		
@@ -92,9 +100,8 @@ public class TriviaDB {
 	}	
 	
 	
-	
 	public String getAnswerB(int id) {
-		// Connect to MySQL
+		//Connect to MYSQL
 		Connection conn = null;
 		try {conn = this.getConnection();}
 		catch (SQLException e) {
@@ -104,13 +111,12 @@ public class TriviaDB {
 		
 		try {
 		    PreparedStatement st = conn.prepareStatement("SELECT * " + "FROM questiontable " + "WHERE id="+id);
-		    // ONEMLI NOT!!! : questiontable burda table'ımızın adı. Eğer DB'deki table ismi farklıysa aynı yap.
 		    ResultSet rs=st.executeQuery();
 		  
-		    String arr = null;
+		    arr = null;
 		    while (rs.next()) {
-		        String questn = rs.getString("B");
-		        arr = questn.replace("\n", ",");
+		        String AnswerB = rs.getString("B");
+		        arr = AnswerB.replace("\n", ",");
 		    }return arr;
 		    }
 		
@@ -121,7 +127,6 @@ public class TriviaDB {
 			}
 		
 	}	
-	
 	
 	
 	public String getAnswerC(int id) {
@@ -135,13 +140,12 @@ public class TriviaDB {
 		
 		try {
 		    PreparedStatement st = conn.prepareStatement("SELECT * " + "FROM questiontable " + "WHERE id="+id);
-		    // ONEMLI NOT!!! : questiontable burda table'ımızın adı. Eğer DB'deki table ismi farklıysa aynı yap.
 		    ResultSet rs=st.executeQuery();
 		  
-		    String arr = null;
+		    arr = null;
 		    while (rs.next()) {
-		        String questn = rs.getString("C");
-		        arr = questn.replace("\n", ",");
+		        String AnswerC = rs.getString("C");
+		        arr = AnswerC.replace("\n", ",");
 		    }return arr;
 		    }
 		
@@ -152,7 +156,6 @@ public class TriviaDB {
 			}
 		
 	}
-	
 	
 	
 	public String getAnswerD(int id) {
@@ -166,13 +169,12 @@ public class TriviaDB {
 		
 		try {
 		    PreparedStatement st = conn.prepareStatement("SELECT * " + "FROM questiontable " + "WHERE id="+id);
-		    // ONEMLI NOT!!! : questiontable burda table'ımızın adı. Eğer DB'deki table ismi farklıysa aynı yap.
 		    ResultSet rs=st.executeQuery();
 		  
 		    String arr = null;
 		    while (rs.next()) {
-		        String questn = rs.getString("D");
-		        arr = questn.replace("\n", ",");
+		        String AnswerD = rs.getString("D");
+		        arr = AnswerD.replace("\n", ",");
 		    }return arr;
 		    }
 		
@@ -183,6 +185,7 @@ public class TriviaDB {
 			}
 		
 	}	
+	
 	
 	public String getcorrectAnswer(int id) {
 		// Connect to MySQL
@@ -195,21 +198,48 @@ public class TriviaDB {
 		
 		try {
 		    PreparedStatement st = conn.prepareStatement("SELECT * " + "FROM questiontable " + "WHERE id="+id);
-		    // ONEMLI NOT!!! : questiontable burda table'ımızın adı. Eğer DB'deki table ismi farklıysa aynı yap.
 		    ResultSet rs=st.executeQuery();
 		  
-		    String arr = null;
+		    arr = null;
 		    while (rs.next()) {
-		        String questn = rs.getString("answer");
-		        arr = questn.replace("\n", ",");
+		        String CorrectAnswer = rs.getString("answer");
+		        arr = CorrectAnswer.replace("\n", ",");
 		    }return arr;		    
 		    }
-		
 		
 		catch (SQLException e) {
 			System.out.println("ERROR: Could not connect the table");
 			e.printStackTrace();
 			return ("failed to get the correct answer from table");
+			}
+		
+	}	
+	
+	
+	public String getQuestionScore(int id) {
+		// Connect to MySQL
+		Connection conn = null;
+		try {conn = this.getConnection();}
+		catch (SQLException e) {
+			System.out.println("ERROR: Could not connect to the database");
+			e.printStackTrace();
+			}
+		
+		try {
+		    PreparedStatement st = conn.prepareStatement("SELECT * " + "FROM questiontable " + "WHERE id="+id);
+		    ResultSet rs=st.executeQuery();
+		  
+		    arr = null;
+		    while (rs.next()) {
+		        String Score = rs.getString("score");
+		        arr = Score.replace("\n", ",");
+		    }return arr;		    
+		    }
+		
+		catch (SQLException e) {
+			System.out.println("ERROR: Could not connect the table");
+			e.printStackTrace();
+			return ("failed to get the question score from table");
 			}
 		
 	}	

@@ -7,12 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-//import java.util.concurrent.CountDownLatch;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Toolkit;
+import javax.swing.JOptionPane;
 import java.awt.event.*;
 
 public class ThreadClient implements Runnable {
@@ -22,23 +17,22 @@ public class ThreadClient implements Runnable {
 	private static BufferedReader inFromUser = null;
 	private static DataOutputStream outToServer = null;
 	
-   
-	private static String questioon,ansa,ansb,ansc,ansd,correctans;	
+	private static String question,ansA,ansB,ansC,ansD,correctans; //the values to enter for GUI	
+	private int Generalscore=0,questionsanswered=0; //generalscore is player's overall score
+	private static int questionscore; // value of a single question (varies from question)
 	
-	public static synchronized void getfromserver() throws IOException {
-		questioon=inFromServer.readLine();
-		System.out.println(questioon);
-		ansa=inFromServer.readLine();
-		System.out.println(ansa);
-		ansb=inFromServer.readLine();
-		System.out.println(ansb);
-		ansc=inFromServer.readLine();
-		System.out.println(ansc);
-		ansd=inFromServer.readLine();
-		System.out.println(ansd);
-		correctans=inFromServer.readLine();
-		System.out.println(correctans);
-	}
+	
+	//function to get the next question's values from server
+	public static  void getfromserver() throws IOException {
+				question=inFromServer.readLine();
+				ansA=inFromServer.readLine();
+				ansB=inFromServer.readLine();
+				ansC=inFromServer.readLine();
+				ansD=inFromServer.readLine();
+				correctans=inFromServer.readLine();
+				questionscore=Integer.parseInt((inFromServer.readLine()));
+		
+	}//end of getfromserver
 	
 	public static void main(String[] args) {
 		int portNumber = 3333;
@@ -57,148 +51,224 @@ public class ThreadClient implements Runnable {
 		} catch (IOException e) {
 			System.err.println("Couldn't get I/O for the connection to the host " + host);
 		}
-		//buraya kadar np sonrasinda thread yaratimi ve managementi var.
+		
 		
 		if (clientSocket != null && os != null && inFromServer != null) {
 			new Thread(new ThreadClient()).start();				
 		}
+		
 	}//end of main
+	
+	
 	@Override
 	public void run() {		
 		try {
-			getfromserver();
+			getfromserver(); //get the first question for GUI
 		} catch (IOException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		} 
-		GUItest alpha = new GUItest();
-		alpha.SetGUI(questioon, ansa, ansb, ansc, ansd, correctans);
-		//JOptionPane.showMessageDialog(alpha.frame, "Welcome to the game! Please Wait for others to connect.");
+		ClientGUI alpha = new ClientGUI(); //initialize GUI
+		alpha.SetGUI(question, ansA, ansB, ansC, ansD, correctans,Generalscore); //set the first question data for GUI
+		
+		JOptionPane.showMessageDialog(alpha.frame, "Welcome to the game!Please choose the correct answers to get the most score.");
+		
+		
+		//we add actionlisteners to buttons to calculate points and get next question.
+		
+		
+		alpha.A.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					
+					if (alpha.correctanswer.equals("A")) {
+						JOptionPane.showMessageDialog(alpha.frame, "Correct! Onto the next question.");
+						try {
+							questionsanswered++;
+							Generalscore+=questionscore;
+							
+							if(questionsanswered==10){
+								os.println(Generalscore);
+								JOptionPane.showMessageDialog(alpha.frame, "It's over! now let's wait for other players.");
+								System.exit(0);
+							}//end of inner if
+							else{
+								getfromserver();
+								alpha.SetGUI(question, ansA, ansB, ansC, ansD, correctans,Generalscore);
+								}//end of inner else
+						} catch (IOException e1) {
+							e1.printStackTrace();
+							} 		
+					}//end of outer if	
+					
+					else{
+						JOptionPane.showMessageDialog(alpha.frame, "Wrong! Onto the next question.");
+						try {
+							questionsanswered++;
+							if(questionsanswered==10){
+								os.println(Generalscore);
+								JOptionPane.showMessageDialog(alpha.frame, "It's over! now let's wait for other players.");
+								System.exit(0);
+							}//end of inner if
+							else{
+								getfromserver();
+								alpha.SetGUI(question, ansA, ansB, ansC, ansD, correctans,Generalscore);
+								}//end of inner else
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						} 	
+						
+					}//end of outer else
+								
+				}
+			});
+		
+		
+		//the other action listeners are added in the same pattern.
+			
+		
+			alpha.B.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					
+					if (alpha.correctanswer.equals("B")) {
+						JOptionPane.showMessageDialog(alpha.frame, "Correct! Onto the next question.");
+						try {
+							questionsanswered++;
+							Generalscore+=questionscore;
+							
+							if(questionsanswered==10){
+								os.println(Generalscore);
+								JOptionPane.showMessageDialog(alpha.frame, "It's over! now let's wait for other players.");
+								System.exit(0);
+							}
+							else{
+								getfromserver();
+								alpha.SetGUI(question, ansA, ansB, ansC, ansD, correctans,Generalscore);
+								}
 
-		if (alpha.correctanswer.equals("A")) {
-			alpha.A.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					//JOptionPane.showMessageDialog(alpha.frame, "Correct! Wait for other players.")
-						try {
-							os.println("waiting");
-							getfromserver();
-							alpha.SetGUI(questioon, ansa, ansb, ansc, ansd, correctans);
 						} catch (IOException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
-						} 				
+							} 		
+					}//end of outer if	
+					
+					else{
+						JOptionPane.showMessageDialog(alpha.frame, "Wrong! Onto the next question.");
+						try {
+							questionsanswered++;
+							
+							if(questionsanswered==10){
+								os.println(Generalscore);
+								JOptionPane.showMessageDialog(alpha.frame, "It's over! now let's wait for other players.");
+								System.exit(0);
+							}
+							else{
+								getfromserver();
+								alpha.SetGUI(question, ansA, ansB, ansC, ansD, correctans,Generalscore);
+								}
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						} 	
+						
+					}//end of outer else
+								
 				}
 			});
-		}
-		else{
-			alpha.A.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					//JOptionPane.showMessageDialog(alpha.frame, "Wrong! Wait for other players.")
-						try {
-							os.println("waiting");
-							getfromserver();
-							alpha.SetGUI(questioon, ansa, ansb, ansc, ansd, correctans);
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} 				
-				}
-			});
-		}
-		
-		if (alpha.correctanswer.equals("B")) {
-			alpha.B.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					//JOptionPane.showMessageDialog(alpha.frame, "Correct! Wait for other players.")
-						try {
-							os.println("waiting");
-							getfromserver();
-							alpha.SetGUI(questioon, ansa, ansb, ansc, ansd, correctans);
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} 				
-				}
-			});
-		}
-		else{
-			alpha.B.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					//JOptionPane.showMessageDialog(alpha.frame, "Wrong! Wait for other players.")
-						try {
-							os.println("waiting");
-							getfromserver();
-							alpha.SetGUI(questioon, ansa, ansb, ansc, ansd, correctans);
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} 				
-				}
-			});
-		}
-		
-		if (alpha.correctanswer.equals("C")) {
+			
+			
 			alpha.C.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					//JOptionPane.showMessageDialog(alpha.frame, "Correct! Wait for other players.")
+					
+					if (alpha.correctanswer.equals("C")) {
+						JOptionPane.showMessageDialog(alpha.frame, "Correct! Onto the next question.");
 						try {
-							os.println("waiting");
-							getfromserver();
-							alpha.SetGUI(questioon, ansa, ansb, ansc, ansd, correctans);
+							questionsanswered++;
+							Generalscore+=questionscore;
+							
+							if(questionsanswered==10){
+								os.println(Generalscore);
+								JOptionPane.showMessageDialog(alpha.frame, "It's over! now let's wait for other players.");
+								System.exit(0);
+							}
+							else{
+								getfromserver();
+								alpha.SetGUI(question, ansA, ansB, ansC, ansD, correctans,Generalscore);
+								}
 						} catch (IOException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
-						} 				
+							} 		
+					}//end of outer if	
+					
+					else{
+						JOptionPane.showMessageDialog(alpha.frame, "Wrong! Onto the next question.");
+						try {
+							questionsanswered++;
+							if(questionsanswered==10){
+								
+								os.println(Generalscore);
+								JOptionPane.showMessageDialog(alpha.frame, "It's over! now let's wait for other players.");
+								System.exit(0);
+							}
+							else{
+								getfromserver();
+								alpha.SetGUI(question, ansA, ansB, ansC, ansD, correctans,Generalscore);
+								}
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						} 	
+						
+					}//end of outer else
+								
 				}
 			});
-		}
-		else{
-			alpha.C.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					//JOptionPane.showMessageDialog(alpha.frame, "Wrong! Wait for other players.")
-						try {
-							os.println("ready");
-							getfromserver();
-							alpha.SetGUI(questioon, ansa, ansb, ansc, ansd, correctans);
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} 				
-				}
-			});
-		}
 		
-		
-		if (alpha.correctanswer.equals("D")) {
+			
+			
 			alpha.D.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					//JOptionPane.showMessageDialog(alpha.frame, "Correct! Wait for other players.")
+					
+					if (alpha.correctanswer.equals("D")) {
+						JOptionPane.showMessageDialog(alpha.frame, "Correct! Onto the next question.");
 						try {
-							os.println("waiting");
-							getfromserver();
-							alpha.SetGUI(questioon, ansa, ansb, ansc, ansd, correctans);
+							questionsanswered++;
+							Generalscore+=questionscore;
+							
+							if(questionsanswered==10){
+								os.println(Generalscore);
+								JOptionPane.showMessageDialog(alpha.frame, "It's over! now let's wait for other players.");
+								System.exit(0);
+								
+							}
+							else{
+								getfromserver();
+								alpha.SetGUI(question, ansA, ansB, ansC, ansD, correctans,Generalscore);
+								}
+						} catch (IOException e1) {
+							e1.printStackTrace();
+							} 		
+					}//end of outer if	
+					
+					else{
+						JOptionPane.showMessageDialog(alpha.frame, "Wrong! Onto the next question.");
+						try {
+							questionsanswered++;
+							
+							if(questionsanswered==10){
+								os.println(Generalscore);
+								JOptionPane.showMessageDialog(alpha.frame, "It's over! now let's wait for other players.");
+								System.exit(0);
+							}
+							else{
+								getfromserver();
+								alpha.SetGUI(question, ansA, ansB, ansC, ansD, correctans,Generalscore);
+								}
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
-						} 				
+						} 	
+						
+					}//end of outer else
+								
 				}
 			});
-		}
-		else{
-			alpha.D.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					//JOptionPane.showMessageDialog(alpha.frame, "Wrong! Wait for other players.")
-						try {
-							os.println("waiting");
-							getfromserver();
-							alpha.SetGUI(questioon, ansa, ansb, ansc, ansd, correctans);
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} 				
-				}
-			});
-		}
+		
 				
 	}//end of run
 	
