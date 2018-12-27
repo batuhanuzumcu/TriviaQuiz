@@ -1,7 +1,6 @@
 package TriviaQuiz_1;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,8 +15,6 @@ public class ThreadClient implements Runnable {
 	private static Socket clientSocket = null; // The client socket
 	private static PrintWriter os = null; // The output stream
 	private static BufferedReader inFromServer = null; // The input stream
-	private static BufferedReader inFromUser = null;
-	private static DataOutputStream outToServer = null;
 	private static Scanner inputforIP= new Scanner(System.in);
 	
 	private static String question,ansA,ansB,ansC,ansD,correctans; //the values to enter for GUI	
@@ -48,10 +45,8 @@ public class ThreadClient implements Runnable {
 		// Open a socket on a given host and port. Open input and output streams.
 		try {
 			clientSocket = new Socket(host, portNumber);
-			inFromUser = new BufferedReader(new InputStreamReader(System.in));
 			inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			os = new PrintWriter(clientSocket.getOutputStream(), true); 
-			outToServer = new DataOutputStream(clientSocket.getOutputStream());
 			
 		} catch (UnknownHostException e) {
 			System.err.println("Don't know about host " + host);

@@ -27,7 +27,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 		
 
 		label1 = new JLabel(qstion);
-		label1.setBounds(100, 20, 500, 60);
+		label1.setBounds(70, 50, 1200, 60);
 		label1.setLayout(new FlowLayout());
 		label1.setForeground(Color.BLACK);
 		label1.setFont(new Font(qstion, Font.CENTER_BASELINE, 18));
