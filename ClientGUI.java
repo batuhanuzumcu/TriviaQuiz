@@ -21,6 +21,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 
     
 	public ClientGUI(){
+		
 		frame = new JFrame("Trivia Quiz");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(null);

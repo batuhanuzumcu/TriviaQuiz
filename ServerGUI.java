@@ -10,7 +10,9 @@ public class ServerGUI  extends JFrame implements ActionListener {
 	JLabel label1,label2,label3,label4, labelwinner; //where score's and the winner will be shown
 	JButton Quit;  // quit button to exit
 	
+	
 	public ServerGUI(String score1,String score2,String score3,String score4, String winner){
+		
 		frame = new JFrame("Score Table");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(null);
