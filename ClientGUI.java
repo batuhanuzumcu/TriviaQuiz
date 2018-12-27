@@ -72,7 +72,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 		}
 
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("button pressed");
+
 	}
 	
 	//set the new questions values

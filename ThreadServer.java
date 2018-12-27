@@ -118,6 +118,7 @@ class ThreadServer extends Thread implements Runnable {
 				score = Integer.parseInt(inFromClient.readLine());
 				playerscore[playersfinished] = score;
 				playersfinished++;
+				System.out.println("Waiting for "+(4-playersfinished)+" more player(s) to finish");
 			} catch (NumberFormatException | IOException e) {
 				e.printStackTrace();
 			}
@@ -125,6 +126,7 @@ class ThreadServer extends Thread implements Runnable {
 			System.out.println("The player's score is: " + score);
 			
 			if (playersfinished == 4) {
+				System.out.println("game finished! time to see the scores.");
 				int max = 0, bestplayer = 0;
 				for (int playernum = 0; playernum < 4; playernum++) {
 					if (max < playerscore[playernum]) {
